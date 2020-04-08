@@ -101,50 +101,7 @@
     },
 
     mounted() {
-      const that = this;
-
-      axios
-        .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
-        .then(function (response) {
-          if (!response.data.length) {
-            window.location.href = "/"; // can be used that.$router.push("/")
-          } else {
-            that.account = response.data[0];
-
-            if (that.account && that.transactions) {
-              that.loading = false;
-            }
-          }
-        });
-
-      axios
-        .get(
-          `http://localhost:8000/api/accounts/${
-            that.$route.params.id
-          }/transactions`
-        )
-        .then(function (response) {
-          that["transactions"] = response.data;
-
-          let transactions: { "id": number, "from": null, "to": null, "details": string, "amount": string }[] = [];
-          for (let i = 0; i < that.transactions.length; i++) {
-            that.transactions[i].amount =
-              (that.account.currency === "usd" ? "$" : "€") +
-              that.transactions[i].amount;
-
-            if (that.account.id != that.transactions[i].to) {
-              that.transactions[i].amount = "-" + that.transactions[i].amount;
-            }
-
-            transactions.push(that.transactions[i]);
-          }
-
-          that.transactions = transactions;
-
-          if (that.account && that.transactions) {
-            that.loading = false;
-          }
-        });
+      this.updateItems();
     },
 
     methods: {
@@ -166,41 +123,55 @@
 
         // update items
         setTimeout(() => {
-          axios
-            .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
-            .then(function (response) {
-              if (!response.data.length) {
-                window.location.href = "/";
-              } else {
-                that.account = response.data[0];
-              }
-            });
-
-          axios
-            .get(
-              `http://localhost:8000/api/accounts/${
-                that.$route.params.id
-              }/transactions`
-            )
-            .then(function (response) {
-              that["transactions"] = response.data;
-
-              var transactions = [];
-              for (let i = 0; i < that.transactions.length; i++) {
-                that.transactions[i].amount =
-                  (that.account.currency === "usd" ? "$" : "€") +
-                  that.transactions[i].amount;
-
-                if (that.account.id != that.transactions[i].to) {
-                  that.transactions[i].amount = "-" + that.transactions[i].amount;
-                }
-
-                transactions.push(that.transactions[i]);
-              }
-
-              that.transactions = transactions;
-            });
+          that.updateItems();
         }, 200);
+      },
+
+      updateItems() {
+        const that = this;
+
+        axios
+          .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
+          .then(function (response) {
+            if (!response.data.length) {
+              window.location.href = "/";
+            } else {
+              that.account = response.data[0];
+
+              if (that.account.id && that.transactions[0].id) {
+                that.loading = false;
+              }
+            }
+          });
+
+        axios
+          .get(
+            `http://localhost:8000/api/accounts/${
+              that.$route.params.id
+            }/transactions`
+          )
+          .then(function (response) {
+            that["transactions"] = response.data;
+
+            let transactions: { "id": number, "from": null, "to": null, "details": string, "amount": string }[] = [];
+            for (let i = 0; i < that.transactions.length; i++) {
+              that.transactions[i].amount =
+                (that.account.currency === "usd" ? "$" : "€") +
+                that.transactions[i].amount;
+
+              if (that.account.id != that.transactions[i].to) {
+                that.transactions[i].amount = "-" + that.transactions[i].amount;
+              }
+
+              transactions.push(that.transactions[i]);
+            }
+
+            that.transactions = transactions;
+
+            if (that.account.id && that.transactions[0].id) {
+              that.loading = false;
+            }
+          });
       }
     }
   });
