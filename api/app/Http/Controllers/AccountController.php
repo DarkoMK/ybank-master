@@ -31,7 +31,7 @@ class AccountController extends Controller
             $fromUser->update(['balance' => DB::raw('balance-' . $amount)]);
             $toUser->update(['balance' => DB::raw('balance+' . $amount)]);
 
-            Transaction::insert(
+            Transaction::create(
                 [
                     'from' => $id,
                     'to' => $to,
