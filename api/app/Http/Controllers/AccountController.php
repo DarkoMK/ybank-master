@@ -16,7 +16,7 @@ class AccountController extends Controller
 
     public function getTransactions($id)
     {
-        return Account::find($id)->allTransactions()->get();
+        return Account::find($id)->allTransactions()->select('id', 'from', 'to', 'details', 'amount')->get();
     }
 
     public function makeTransaction(Request $request, $id)
