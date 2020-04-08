@@ -13,15 +13,7 @@ use Illuminate\Support\Facades\Route;
   | is assigned the "api" middleware group. Enjoy building your API!
   |
 */
-
-Route::get('accounts/{id}', function ($id) {
-    $account = DB::table('accounts')
-             ->whereRaw("id=$id")
-             ->get();
-
-    return $account;
-});
-
+Route::get('accounts/{id}', 'AccountController@getAccount');
 Route::get('accounts/{id}/transactions', function ($id) {
     $account = DB::table('transactions')
              ->whereRaw("`from`=$id OR `to`=$id")

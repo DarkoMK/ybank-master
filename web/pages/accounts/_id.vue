@@ -133,10 +133,10 @@
         axios
           .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
           .then(function (response) {
-            if (!response.data.length) {
-              window.location.href = "/";
+            if (!response.data) {
+              window.location.href = "/"; // can be used that.$router.push("/")
             } else {
-              that.account = response.data[0];
+              that.account = response.data;
 
               if (that.account.id && that.transactions[0].id) {
                 that.loading = false;
