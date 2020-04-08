@@ -31,7 +31,7 @@ class AccountController extends Controller
             $fromUser->update(['balance' => DB::raw('balance-' . $amount)]);
             $toUser->update(['balance' => DB::raw('balance+' . $amount)]);
 
-            Transaction::create(
+            $transaction = Transaction::create(
                 [
                     'from' => $id,
                     'to' => $to,
@@ -39,6 +39,11 @@ class AccountController extends Controller
                     'details' => $details
                 ]
             );
+
+            if ($transaction) { // if the transaction is created return the new user object
+                return $fromUser->fresh();
+            }
         }
+        return response('Unauthorized action.', 403);
     }
 }
