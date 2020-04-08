@@ -11,4 +11,9 @@ class AccountController extends Controller
     {
         return Account::find($id);
     }
+
+    public function getTransactions($id)
+    {
+        return Account::find($id)->allTransactions()->get();
+    }
 }
